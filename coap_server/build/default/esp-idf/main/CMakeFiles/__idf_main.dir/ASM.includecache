@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/tiori/workspace/Practice3_752964/coap_server/build/default/coap_ca.pem.S
+
+C:/Users/tiori/workspace/Practice3_752964/coap_server/build/default/coap_oscore.conf.S
+
+C:/Users/tiori/workspace/Practice3_752964/coap_server/build/default/coap_server.crt.S
+
+C:/Users/tiori/workspace/Practice3_752964/coap_server/build/default/coap_server.key.S
+
