@@ -1,0 +1,2 @@
+C:\Users\tiori\.espressif\tools\xtensa-esp-elf\esp-13.2.0_20240530\xtensa-esp-elf\bin\xtensa-esp32s3-elf-ar.exe qc libmain.a CMakeFiles/__idf_main.dir/coap_server_example_main.c.obj CMakeFiles/__idf_main.dir/__/__/coap_ca.pem.S.obj CMakeFiles/__idf_main.dir/__/__/coap_server.crt.S.obj CMakeFiles/__idf_main.dir/__/__/coap_server.key.S.obj CMakeFiles/__idf_main.dir/__/__/coap_oscore.conf.S.obj
+C:\Users\tiori\.espressif\tools\xtensa-esp-elf\esp-13.2.0_20240530\xtensa-esp-elf\bin\xtensa-esp32s3-elf-ranlib.exe libmain.a
