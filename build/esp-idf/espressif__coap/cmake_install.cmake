@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/tiori/workspace/Smart_Sneakers/managed_components/espressif__coap
+# Install script for directory: C:/Users/tiori/workspace/Practice3_752964_CoAP/managed_components/espressif__coap
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

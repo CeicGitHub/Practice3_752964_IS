@@ -5,12 +5,12 @@ import time
 from aiocoap import *
 
 #*IP_BOARD_HERE
-ESP32_IP = "192.168.1.163"
+ESP32_IP = "192.168.171.135"
 
 #TODO:Method_to_execute
-TEST = "GET"
+#TEST = "GET"
 #TEST = "PUT"
-#TEST = "DELETE"
+TEST = "DELETE"
 
 #!Actions_Resource(Untie_Tie)
 #URI = "shoe/shoelace"
@@ -20,6 +20,17 @@ TEST = "GET"
 #!Color_Resource
 #URI = "shoe/ledcolor"
 #PAYLOAD = b"FF0000"
+
+#!Steps_Resource
+#URI = "shoe/steps"
+#PAYLOAD = b"true"
+
+#!Size_Resource
+#URI = "shoe/size"
+
+#!Name_Resource
+URI = "shoe/name"
+PAYLOAD = b"Cesar Eduardo Inda Ceniceros"
 
 logging.basicConfig(level=logging.INFO)
 

@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/tiori/workspace/Smart_Sneakers/main/certs/coap_ca.pem
+/* * Data converted from C:/Users/tiori/workspace/Practice3_752964_CoAP/main/certs/coap_ca.pem
  * (null byte appended)
  */
 .data

@@ -1,6 +1,6 @@
 /* Automatically generated file; DO NOT EDIT */
 /* Espressif IoT Development Framework Linker Script */
-/* Generated from: C:\Users\tiori\workspace\Smart_Sneakers\build\esp-idf\esp_system\ld\sections.ld.in */
+/* Generated from: C:\Users\tiori\workspace\Practice3_752964_CoAP\build\esp-idf\esp_system\ld\sections.ld.in */
 
 /*
 

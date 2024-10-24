@@ -22,7 +22,7 @@
 #include "coap3/coap.h"
 
 //*? mDNS_Librarie
-#include "mdns.h"           
+#include "mdns.h"
 
 #ifndef CONFIG_COAP_SERVER_SUPPORT
 #error COAP_SERVER_SUPPORT needs to be enabled
@@ -30,11 +30,10 @@
 
 //LogginLevel can be set via idf.py menuconfig:  0 - 7 (values)
 //0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug
-
 #define EXAMPLE_COAP_PSK_KEY            CONFIG_EXAMPLE_COAP_PSK_KEY
 #define EXAMPLE_COAP_LOG_DEFAULT_LEVEL  CONFIG_COAP_LOG_DEFAULT_LEVEL
 
-const static char *TAG = "CesarInda_CoAP-Server";
+const static char *TAG = "CesarInda_CoAPServer";
 
 #ifdef CONFIG_COAP_MBEDTLS_PKI
 extern uint8_t ca_pem_start[]       asm("_binary_coap_ca_pem_start");
@@ -51,28 +50,34 @@ extern uint8_t oscore_conf_end[]    asm("_binary_coap_oscore_conf_end");
 #endif //**CONFIG_COAP_OSCORE_SUPPORT
 
 
-
-
 //!Actions_Resource(Untie_Tie)
-static char shoelace_data[5];       //**Because 'untie' should be the longest word
+static char shoelace_data[10];       //**Because 'untie' should be the longest word
 static int shoelace_data_len = 0;
+#define SHOELACE_DATA_DEFAULT           "untie"
 
 //!Color_Resource
 static int shoe_ledcolor[3] = {0};
 static int shoe_ledcolor_len = 0;
 static led_strip_handle_t led_strip;
-
-
-
-
-//!Actions_Resource(Untie_Tie)
-#define SHOELACE_DATA_DEFAULT           "untie"
-
-//!Color_Resource
 #define SHOE_LEDCOLOR_RED_DEFAULT       0
 #define SHOE_LEDCOLOR_GREEN_DEFAULT     0
 #define SHOE_LEDCOLOR_BLUE_DEFAULT      0
 
+//!Steps_Resource
+static volatile unsigned int shoe_steps_counter = 0;
+
+//!Size_Resource
+static int shoe_size = 0;
+#define SHOE_SIZE_DEFAULT               20
+
+//!Name_Resource
+static char shoe_name_data[20];
+static int shoe_name_data_len = 0;
+#define SHOE_NAME_DEFAULT               "No name"
+
+//TODO: mDNS_Values
+#define SHOE_MDNS_HOSTNAME              "Scorpion_IntelligentShoes"
+#define SHOE_MDNS_DEFAULT_INSTANCE      "Scorpion IntelligentShoes"
 
 typedef enum {
     SHOE_LEDCOLOR_RED,
@@ -80,7 +85,19 @@ typedef enum {
     SHOE_LEDCOLOR_BLUE
 }Show_LedColor_t;
 
+static void initialize_mdns(void)
+{
+    char *hostname = SHOE_MDNS_HOSTNAME;
+    char *instancename = SHOE_MDNS_DEFAULT_INSTANCE;
 
+    ESP_ERROR_CHECK( mdns_init() ); //**initialize mDNS
+    ESP_ERROR_CHECK( mdns_hostname_set(hostname) ); //**mDNS_Hostname
+    ESP_LOGI(TAG, "mdns hostname set to: [%s]", hostname);
+    ESP_ERROR_CHECK( mdns_instance_name_set(instancename) );  //**Default_mDNS_Instance_Name
+    ESP_LOGI(TAG, "mdns Instance name set to: [%s]", hostname);
+
+    mdns_service_add("shoe_control", "_coap", "_udp", 5683, NULL, 0); //**Add_Service_Control
+}
 
 static void configure_led(void);
 
@@ -93,6 +110,83 @@ static void update_leds()
     led_strip_refresh(led_strip);
 }
 
+static bool IRAM_ATTR shoe_step_counter_cb(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_data)
+{
+    BaseType_t high_task_awoken = pdFALSE;
+    // Increment counter
+    shoe_steps_counter++;
+    // return whether we need to yield at the end of ISR
+    return (high_task_awoken == pdTRUE);
+}
+
+//Handler_Shoename
+static void
+hnd_shoename_get(coap_resource_t *resource,
+                  coap_session_t *session,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
+                  coap_pdu_t *response)
+{
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+
+    ESP_LOGI(TAG,"/shoe/name send name: %s",shoe_name_data);
+
+    coap_add_data_large_response(resource, session, request, response,
+                                 query, COAP_MEDIATYPE_TEXT_PLAIN, 60, 0,
+                                 (size_t)shoe_name_data_len,
+                                 (const u_char *)shoe_name_data,
+                                 NULL, NULL);
+}
+
+static void
+hnd_shoename_put(coap_resource_t *resource,
+                  coap_session_t *session,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
+                  coap_pdu_t *response)
+{
+    size_t size;
+    size_t offset;
+    size_t total;
+    const unsigned char *data;
+
+    coap_resource_notify_observers(resource, NULL);
+
+    if (strcmp (shoe_name_data, SHOE_NAME_DEFAULT) == 0) {
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CREATED);
+    } else {
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE_CHANGED);
+    }
+
+    //coap_get_data_large() sets size to 0 on error
+    (void)coap_get_data_large(request, &size, &data, &offset, &total);
+
+    if (size == 0) {      /* re-init */
+        memset(shoe_name_data,0,sizeof(shoe_name_data));
+        snprintf(shoe_name_data, sizeof(shoe_name_data), SHOE_NAME_DEFAULT);
+        shoe_name_data_len = strlen(shoe_name_data);
+    } else {
+        memset(shoe_name_data,0,sizeof(shoe_name_data));
+        shoe_name_data_len = size > sizeof (shoe_name_data) ? sizeof (shoe_name_data) : size;
+        memcpy (shoe_name_data, data, shoe_name_data_len);
+    }
+
+    ESP_LOGI(TAG,"/shoe/name change name to: %s",shoe_name_data);
+}
+
+static void
+hnd_shoename_delete(coap_resource_t *resource,
+                     coap_session_t *session,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
+                     coap_pdu_t *response)
+{
+    coap_resource_notify_observers(resource, NULL);
+    snprintf(shoe_name_data, sizeof(shoe_name_data), SHOE_NAME_DEFAULT);
+    shoe_name_data_len = strlen(shoe_name_data);
+    ESP_LOGI(TAG,"/shoe/name reset name to: %s",shoe_name_data);
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
+}
 
 //Handler_Shoelace
 static void
@@ -267,6 +361,69 @@ hnd_shoeledcolor_delete(coap_resource_t *resource,
                     shoe_ledcolor[SHOE_LEDCOLOR_BLUE] & 0xFF);
 
     coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
+}
+
+//Handler_Shoestepscounter
+static void
+hnd_shoestepscounter_get(coap_resource_t *resource,
+                  coap_session_t *session,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
+                  coap_pdu_t *response)
+{
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+
+    // Convert shoe step count to string
+    char temp_arr[20] = {0};
+    sprintf(temp_arr,"%d",shoe_steps_counter);
+
+    ESP_LOGI(TAG,"Send shoe steps counter: %d",shoe_steps_counter);
+
+    coap_add_data_large_response(resource, session, request, response,
+                                 query, COAP_MEDIATYPE_TEXT_PLAIN, 60, 0,
+                                 strlen(temp_arr),
+                                 (const u_char *)temp_arr,
+                                 NULL, NULL);
+}
+
+static void
+hnd_shoestepscounter_delete(coap_resource_t *resource,
+                     coap_session_t *session,
+                     const coap_pdu_t *request,
+                     const coap_string_t *query,
+                     coap_pdu_t *response)
+{
+    coap_resource_notify_observers(resource, NULL);
+    
+    // Reset shoe step counter
+    shoe_steps_counter = 0;
+
+    ESP_LOGI(TAG,"Reset shoe steps counter to: %d",shoe_steps_counter);
+
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
+}
+
+//Handler_Shoesize
+static void
+hnd_shoesize_get(coap_resource_t *resource,
+                  coap_session_t *session,
+                  const coap_pdu_t *request,
+                  const coap_string_t *query,
+                  coap_pdu_t *response)
+{
+    coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
+
+    // Convert shoe step count to string
+    char temp_arr[20] = {0};
+    sprintf(temp_arr,"%d",shoe_size);
+
+    ESP_LOGI(TAG,"Send shoe size: %d",shoe_size);
+
+    coap_add_data_large_response(resource, session, request, response,
+                                 query, COAP_MEDIATYPE_TEXT_PLAIN, 60, 0,
+                                 strlen(temp_arr),
+                                 (const u_char *)temp_arr,
+                                 NULL, NULL);
 }
 
 

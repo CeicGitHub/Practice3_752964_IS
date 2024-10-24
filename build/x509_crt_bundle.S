@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/tiori/workspace/Smart_Sneakers/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from C:/Users/tiori/workspace/Practice3_752964_CoAP/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 #if !defined (__APPLE__) && !defined (__linux__)
