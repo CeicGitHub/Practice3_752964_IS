@@ -1,2 +1,0 @@
-C:\Espressif\tools\xtensa-esp-elf\esp-13.2.0_20240530\xtensa-esp-elf\bin\xtensa-esp32s3-elf-ar.exe qc libmicro-ecc.a "CMakeFiles/__idf_micro-ecc.dir/uECC_verify_antifault.c.obj"
-C:\Espressif\tools\xtensa-esp-elf\esp-13.2.0_20240530\xtensa-esp-elf\bin\xtensa-esp32s3-elf-ranlib.exe libmicro-ecc.a

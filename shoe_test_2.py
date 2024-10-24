@@ -2,7 +2,9 @@ from zeroconf import ServiceBrowser, ServiceListener, Zeroconf
 import logging
 import asyncio
 import socket
+
 from aiocoap import *
+
 
 # un comment the type of test you want to execute
 #TEST = "GET"

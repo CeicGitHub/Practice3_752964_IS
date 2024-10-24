@@ -1,0 +1,19 @@
+# Hashes of file build rules.
+5a371c5755cea043a34a2a33dd8dfd72 .bin_timestamp
+dc254caa58969af727a18424e5d81db9 bootloader-prefix/src/bootloader-stamp/bootloader-configure
+752bf09880aa10bd51de33f3d613850f bootloader-prefix/src/bootloader-stamp/bootloader-download
+f469d44e0282889dbc9ed3fef37adbf8 bootloader-prefix/src/bootloader-stamp/bootloader-install
+cd9ae18d730cd0399970ab059f83f3cb bootloader-prefix/src/bootloader-stamp/bootloader-mkdir
+23179cd1cb994a7729e95d2df2cd8ace bootloader-prefix/src/bootloader-stamp/bootloader-patch
+bafe959b9ef3aadfe4a76fc6c98b9650 bootloader-prefix/src/bootloader-stamp/bootloader-update
+0d18150d28c185aabc81b824fed2250a coap_ca.pem.S
+e6c44c12e6d4dd1eda152edf63575b8e coap_oscore.conf.S
+6a016fffea0115478d1e01b8e1b79a3f coap_server.crt.S
+5e3659dd538285aa5e34d82c4b45ec15 coap_server.key.S
+a25b0351a2ff3970080bc3c59a6e9d73 esp-idf/esp_system/ld/memory.ld
+120e001c3880ddbad51c8d2df9e71a7c esp-idf/esp_system/ld/sections.ld
+cca75a8066b3591bd08eae9bf279e3f2 esp-idf/esp_system/ld/sections.ld.in
+2cfc29fa047fd3eb529936b850a62ce8 esp-idf/mbedtls/x509_crt_bundle
+c9b20f375ef459011e64c2888abe2ef9 partition_table/partition-table.bin
+6f1c27417bea99a267d185fa14c118c1 project_elf_src_esp32s3.c
+2d70c70f50a17845087b579dccc9c57e x509_crt_bundle.S

@@ -1,33 +1,29 @@
 import logging
 import asyncio
+import time
 
 from aiocoap import *
 
-# put your board's IP address here
+#*IP_BOARD_HERE
 ESP32_IP = "192.168.1.163"
 
-# un comment the type of test you want to execute
+#TODO:Method_to_execute
 TEST = "GET"
 #TEST = "PUT"
 #TEST = "DELETE"
 
+#!Actions_Resource(Untie_Tie)
 #URI = "shoe/shoelace"
 #PAYLOAD = b"tie"
 #PAYLOAD = b"untie"
 
+#!Color_Resource
 #URI = "shoe/ledcolor"
-#PAYLOAD = b"123456"
-
-#URI = "shoe/steps"
-
-#URI = "shoe/size"
-
-
-URI = "Espressif"
-PAYLOAD = b"Judith"
+#PAYLOAD = b"FF0000"
 
 logging.basicConfig(level=logging.INFO)
 
+#Function_to-do_request_"GET"
 async def get(ip, uri):
     protocol = await Context.create_client_context()
     request = Message(code = GET, uri = 'coap://' + ip + '/' +  uri)
@@ -39,6 +35,7 @@ async def get(ip, uri):
     else:
         print('Result: %s\n%r'%(response.code, response.payload))
 
+#Function_to-do_request_"PUT"
 async def put(ip, uri, payload):
     context = await Context.create_client_context()
     await asyncio.sleep(2)
@@ -46,6 +43,7 @@ async def put(ip, uri, payload):
     response = await context.request(request).response
     print('Result: %s\n%r'%(response.code, response.payload))
 
+#Function_to-do_request_"DELETE"
 async def delete(ip, uri):
     context = await Context.create_client_context()
     await asyncio.sleep(2)
@@ -56,14 +54,21 @@ async def delete(ip, uri):
 if __name__ == "__main__":
   asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+ #Delay_For_ServerCoAP_for_Initialization_Wait == 2 seconds before start request's
+  time.sleep(2)
+
+
   if(TEST == "GET"):
     print("*** GET ***")
     asyncio.run(get(ESP32_IP, URI))
+  
+
   if(TEST == "PUT"):
     print("*** PUT ***")
     asyncio.run(put(ESP32_IP, URI, PAYLOAD))
     print("*** GET ***")
     asyncio.run(get(ESP32_IP, URI))
+
   if(TEST == "DELETE"):
     print("*** DELETE ***")
     asyncio.run(delete(ESP32_IP, URI))
