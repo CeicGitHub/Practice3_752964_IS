@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "coap_server",
-    "project_version":    "6e38926-dirty",
+    "project_version":    "f9f39be-dirty",
     "project_path":       "C:/Users/tiori/workspace/Practice3_752964_CoAP",
     "idf_path":           "C:/Users/tiori/esp/v5.3.1/esp-idf",
     "build_dir":          "C:/Users/tiori/workspace/Practice3_752964_CoAP/build",

@@ -9,8 +9,8 @@ ESP32_IP = "192.168.171.135"
 
 #TODO:Method_to_execute
 #TEST = "GET"
-#TEST = "PUT"
-TEST = "DELETE"
+TEST = "PUT"
+#TEST = "DELETE"
 
 #!Actions_Resource(Untie_Tie)
 #URI = "shoe/shoelace"

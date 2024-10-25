@@ -90,8 +90,8 @@ static void initialize_mdns(void)
     char *hostname = SHOE_MDNS_HOSTNAME;
     char *instancename = SHOE_MDNS_DEFAULT_INSTANCE;
 
-    ESP_ERROR_CHECK( mdns_init() ); //**initialize mDNS
-    ESP_ERROR_CHECK( mdns_hostname_set(hostname) ); //**mDNS_Hostname
+    ESP_ERROR_CHECK( mdns_init() );                     //**initialize mDNS
+    ESP_ERROR_CHECK( mdns_hostname_set(hostname) );     //**mDNS_Hostname
     ESP_LOGI(TAG, "mdns hostname set to: [%s]", hostname);
     ESP_ERROR_CHECK( mdns_instance_name_set(instancename) );  //**Default_mDNS_Instance_Name
     ESP_LOGI(TAG, "mdns Instance name set to: [%s]", hostname);
@@ -113,19 +113,13 @@ static void update_leds()
 static bool IRAM_ATTR shoe_step_counter_cb(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_data)
 {
     BaseType_t high_task_awoken = pdFALSE;
-    // Increment counter
-    shoe_steps_counter++;
-    // return whether we need to yield at the end of ISR
-    return (high_task_awoken == pdTRUE);
+    shoe_steps_counter++; //**Increment counter
+    return (high_task_awoken == pdTRUE); //**"Return to yield control at the end of "ISR"
 }
 
-//Handler_Shoename
+//**Handler_Shoename_Get
 static void
-hnd_shoename_get(coap_resource_t *resource,
-                  coap_session_t *session,
-                  const coap_pdu_t *request,
-                  const coap_string_t *query,
-                  coap_pdu_t *response)
+hnd_shoename_get(coap_resource_t *resource, coap_session_t *session, const coap_pdu_t *request, const coap_string_t *query, coap_pdu_t *response)
 {
     coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
 
